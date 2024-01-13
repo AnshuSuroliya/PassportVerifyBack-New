@@ -64,6 +64,7 @@ public class UserRegisterServiceImple implements UserServiceRegister{
 //                return loginResponse;
 //            }
                 Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(login.getEmail(), login.getPassword()));
+
                 if (authentication.isAuthenticated()) {
                     String jwt = (jwtService.generateToken(login.getEmail()));
                     Long id = user.getId();

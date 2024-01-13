@@ -42,7 +42,7 @@ public class ValidationService implements Validation{
     @Override
     public Boolean verifyValidation(PassportDataRequest passportDataRequest) throws ValidationException {
         if(passportDataRequest.getFirstName().matches(name) && passportDataRequest.getLastName().matches(name) && passportDataRequest.getPhoneNumber().matches(number) && passportDataRequest.getEmail().matches(email) && passportDataRequest.getAge().matches(number)
-        && passportDataRequest.getZipcode().matches(number) && passportDataRequest.getAddressline1().matches(address) && passportDataRequest.getAddressline2().matches(address) &&
+        && passportDataRequest.getZipcode().matches(number)  &&
         passportDataRequest.getCity().matches(name) && passportDataRequest.getState().matches(name) && passportDataRequest.getPassportNumber().matches(passportNumber)){
         return true;
         }
