@@ -19,11 +19,11 @@ public class PassportController {
 	@Autowired
 	PassportServiceImple passportServiceImple;
 
-	@PostMapping(path="/verify", consumes=MediaType.MULTIPART_FORM_DATA_VALUE)
-	public ResponseEntity<VerificationResponse> verify(@RequestParam("passportDoc") MultipartFile passportDoc,
+	@PostMapping(path="/verify",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+	public ResponseEntity<VerificationResponse> verify(
 													   @ModelAttribute PassportDataRequest passportDataRequest
 			) throws TesseractException, IOException {
-		return new ResponseEntity<>(passportServiceImple.registerPassport(passportDataRequest,passportDoc),
+		return new ResponseEntity<>(passportServiceImple.registerPassport(passportDataRequest),
 				HttpStatus.ACCEPTED);
 	}
 }

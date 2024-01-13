@@ -28,11 +28,12 @@ public class PassportServiceImple implements PassportService{
 	@Autowired
 	ITesseract tesseract;
 
-	public VerificationResponse registerPassport(PassportDataRequest passportDataRequest, MultipartFile passportDoc)
+	public VerificationResponse registerPassport(PassportDataRequest passportDataRequest)
 			throws TesseractException, IOException {
 		try {
+
 			PassportData passportData0 = passportDataRepository.findByNo(passportDataRequest.getPassportNumber());
-			InputStream inputStream = passportDoc.getInputStream();
+			InputStream inputStream = passportDataRequest.getPassportDoc().getInputStream();
 			BufferedImage bufferedImage = ImageIO.read(inputStream);
 
 			String result = tesseract.doOCR(bufferedImage).replaceAll("\\s", "");
@@ -51,11 +52,11 @@ public class PassportServiceImple implements PassportService{
 					passportData.setEmail(passportDataRequest.getEmail());
 
 					passportDataRepository.save(passportData);
-					VerificationResponse verificationResponse=new VerificationResponse("Registered Successfully");
+					VerificationResponse verificationResponse=new VerificationResponse("Verified and Registered Successfully");
 					return verificationResponse;
 				} else {
 					log.debug("PassportService.registerPassport.end Issue in register");
-					VerificationResponse verificationResponse1=new VerificationResponse("Details Not Matching");
+					VerificationResponse verificationResponse1=new VerificationResponse("Details Not Matching Please check again!");
 					return verificationResponse1;
 				}
 

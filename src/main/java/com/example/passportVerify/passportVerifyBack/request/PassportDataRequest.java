@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @Getter
@@ -24,7 +25,7 @@ public class PassportDataRequest {
     private String phoneNumber;
     private String email;
     private String passportNumber;
-
+    private MultipartFile passportDoc;
 
 
 }
