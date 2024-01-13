@@ -5,6 +5,9 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import com.example.passportVerify.passportVerifyBack.response.VerificationResponse;
+import jakarta.validation.Validation;
+import org.slf4j.ILoggerFactory;
+import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -22,11 +25,15 @@ import javax.imageio.ImageIO;
 @Service
 @Slf4j
 public class PassportServiceImple implements PassportService{
+
 	@Autowired
 	PassportDataRepository passportDataRepository;
 	
 	@Autowired
 	ITesseract tesseract;
+
+	@Autowired
+	ValidationService validationService;
 
 	public VerificationResponse registerPassport(PassportDataRequest passportDataRequest)
 			throws TesseractException, IOException {
