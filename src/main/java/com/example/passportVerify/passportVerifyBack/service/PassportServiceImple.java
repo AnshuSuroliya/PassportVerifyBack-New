@@ -4,6 +4,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.example.passportVerify.passportVerifyBack.exception.ValidationException;
 import com.example.passportVerify.passportVerifyBack.response.VerificationResponse;
 import jakarta.validation.Validation;
 import org.slf4j.ILoggerFactory;
@@ -36,47 +37,53 @@ public class PassportServiceImple implements PassportService{
 	ValidationService validationService;
 
 	public VerificationResponse registerPassport(PassportDataRequest passportDataRequest)
-			throws TesseractException, IOException {
-		try {
+			throws TesseractException, IOException , ValidationException {
 
-			PassportData passportData0 = passportDataRepository.findByNo(passportDataRequest.getPassportNumber());
-			InputStream inputStream = passportDataRequest.getPassportDoc().getInputStream();
-			BufferedImage bufferedImage = ImageIO.read(inputStream);
+			if(validationService.verifyValidation(passportDataRequest)) {
+				try {
+					PassportData passportData0 = passportDataRepository.findByNo(passportDataRequest.getPassportNumber());
+					InputStream inputStream = passportDataRequest.getPassportDoc().getInputStream();
+					BufferedImage bufferedImage = ImageIO.read(inputStream);
 
-			String result = tesseract.doOCR(bufferedImage).replaceAll("\\s", "");
-			log.info(result);
+					String result = tesseract.doOCR(bufferedImage).replaceAll("\\s", "");
+					log.info(result);
 //		File image = new File(String.valueOf(passportDataRequest.getPassportDoc()));
 //		String result = tesseract.doOCR(image);
-			if (passportData0 == null) {
-				if (result.contains(passportDataRequest.getFirstName()) && result.contains(passportDataRequest.getLastName())
-						&& result.contains(passportDataRequest.getPassportNumber())) {
-					PassportData passportData = new PassportData();
-					passportData.setFirstName(passportDataRequest.getFirstName());
-					passportData.setLastName(passportDataRequest.getLastName());
-					passportData.setPassportNumber(passportDataRequest.getPassportNumber());
-					passportData.setPhoneNumber(passportDataRequest.getPhoneNumber());
-					passportData.setAge(passportDataRequest.getAge());
-					passportData.setEmail(passportDataRequest.getEmail());
+					if (passportData0 == null) {
+						if (result.contains(passportDataRequest.getFirstName()) && result.contains(passportDataRequest.getLastName())
+								&& result.contains(passportDataRequest.getPassportNumber())) {
+							PassportData passportData = new PassportData();
+							passportData.setFirstName(passportDataRequest.getFirstName());
+							passportData.setLastName(passportDataRequest.getLastName());
+							passportData.setPassportNumber(passportDataRequest.getPassportNumber());
+							passportData.setPhoneNumber(passportDataRequest.getPhoneNumber());
+							passportData.setAge(passportDataRequest.getAge());
+							passportData.setEmail(passportDataRequest.getEmail());
 
-					passportDataRepository.save(passportData);
-					VerificationResponse verificationResponse=new VerificationResponse("Verified and Registered Successfully");
-					return verificationResponse;
-				} else {
-					log.debug("PassportService.registerPassport.end Issue in register");
-					VerificationResponse verificationResponse1=new VerificationResponse("Details Not Matching Please check again!");
-					return verificationResponse1;
+							passportDataRepository.save(passportData);
+							VerificationResponse verificationResponse = new VerificationResponse("Verified and Registered Successfully");
+							return verificationResponse;
+						} else {
+							log.debug("PassportService.registerPassport.end Issue in register");
+							VerificationResponse verificationResponse1 = new VerificationResponse("Details Not Matching Please check again!");
+							return verificationResponse1;
+						}
+
+					} else {
+						VerificationResponse verificationResponse2 = new VerificationResponse("Registered Already");
+						return verificationResponse2;
+					}
+				} catch (IOException e) {
+					log.error("Error registering user", e);
+					throw new RuntimeException("Error registering user", e);
+				} catch (TesseractException e) {
+					log.error("Error performing OCR", e);
+					throw new TesseractException("Error performing OCR", e);
 				}
-
 			} else {
-				VerificationResponse verificationResponse2=new VerificationResponse("Registered Already");
-				return verificationResponse2;
+				log.info("Provided input syntax is incorrect");
+				throw new ValidationException("Provided input is syntax incorrect");
+
 			}
-		} catch (IOException e) {
-			log.error("Error registering user",e);
-			throw new RuntimeException("Error registering user", e);
-		}catch (TesseractException e) {
-			log.error("Error performing OCR", e);
-			throw new TesseractException("Error performing OCR", e);
-		}
 	}
 }

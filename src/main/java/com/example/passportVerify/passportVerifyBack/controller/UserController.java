@@ -1,6 +1,7 @@
 package com.example.passportVerify.passportVerifyBack.controller;
 
 import com.example.passportVerify.passportVerifyBack.exception.UserException;
+import com.example.passportVerify.passportVerifyBack.exception.ValidationException;
 import com.example.passportVerify.passportVerifyBack.response.SignupResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,12 +26,12 @@ public class UserController {
     UserRegisterServiceImple userRegisterServiceImple;
 
 	@PostMapping("/signup")
-	public ResponseEntity<SignupResponse> register(@RequestBody User user) throws UserException {
+	public ResponseEntity<SignupResponse> register(@RequestBody User user) throws UserException, ValidationException {
 		return new ResponseEntity<>(userRegisterServiceImple.signUp(user), HttpStatus.CREATED);
 	}
 
 	@PostMapping("/signin")
-	public ResponseEntity<LoginResponse> login(@RequestBody Login login) throws UserException {
+	public ResponseEntity<LoginResponse> login(@RequestBody Login login) throws UserException,ValidationException {
 		return new ResponseEntity<>(userRegisterServiceImple.signIn(login), HttpStatus.OK);
 	}
 

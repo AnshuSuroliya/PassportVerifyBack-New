@@ -1,5 +1,6 @@
 package com.example.passportVerify.passportVerifyBack.controller;
 
+import com.example.passportVerify.passportVerifyBack.exception.ValidationException;
 import com.example.passportVerify.passportVerifyBack.request.PassportDataRequest;
 import com.example.passportVerify.passportVerifyBack.response.VerificationResponse;
 import com.example.passportVerify.passportVerifyBack.service.PassportServiceImple;
@@ -22,7 +23,7 @@ public class PassportController {
 	@PostMapping(path="/verify",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
 	public ResponseEntity<VerificationResponse> verify(
 													   @ModelAttribute PassportDataRequest passportDataRequest
-			) throws TesseractException, IOException {
+			) throws TesseractException, IOException, ValidationException {
 		return new ResponseEntity<>(passportServiceImple.registerPassport(passportDataRequest),
 				HttpStatus.ACCEPTED);
 	}
