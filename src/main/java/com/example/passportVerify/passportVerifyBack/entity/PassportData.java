@@ -11,6 +11,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.sql.Date;
+
 
 @Entity
 @Setter
@@ -29,12 +31,14 @@ public class PassportData {
 	@OneToOne
 	private Address address;
 	@NotNull
-	private String age;
+	private Date dob;
 	@NotNull
 	private String phoneNumber;
 	@NotNull
 	private String email;
 	@NotNull
 	private String passportNumber;
+	@NotNull
+	private Date validity;
 
 }

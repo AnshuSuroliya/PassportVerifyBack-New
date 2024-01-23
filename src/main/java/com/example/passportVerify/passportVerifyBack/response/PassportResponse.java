@@ -1,15 +1,14 @@
 package com.example.passportVerify.passportVerifyBack.response;
 
-import lombok.AllArgsConstructor;
+import com.example.passportVerify.passportVerifyBack.entity.PassportData;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@Getter
 @Setter
+@Getter
 @NoArgsConstructor
-@AllArgsConstructor
-public class VerificationResponse {
-    private String message;
+public class PassportResponse {
+    private PassportData passportData;
     private Boolean success;
 }

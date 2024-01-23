@@ -8,6 +8,7 @@ import com.example.passportVerify.passportVerifyBack.repository.AddressRepositor
 import com.example.passportVerify.passportVerifyBack.repository.PassportDataRepository;
 import com.example.passportVerify.passportVerifyBack.request.GetRequest;
 import com.example.passportVerify.passportVerifyBack.request.PassportDataRequest;
+import com.example.passportVerify.passportVerifyBack.response.PassportResponse;
 import com.example.passportVerify.passportVerifyBack.response.VerificationResponse;
 import net.sourceforge.tess4j.ITesseract;
 import net.sourceforge.tess4j.TesseractException;
@@ -24,6 +25,8 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.sql.Date;
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -66,7 +69,9 @@ class PassportServiceImpleTest {
             request.setCity("jaipur");
             request.setState("rajasthan");
             request.setZipcode("302029");
-            request.setAge("25");
+            LocalDate dob=LocalDate.of(2000,12,23);
+            request.setDob(java.sql.Date.valueOf(dob));
+            request.setValidity(new Date(2033-12-12));
             request.setPassportNumber("F27284823");
             Address address=new Address();
             address.setAddressLine1(request.getAddressLine1());
@@ -80,17 +85,22 @@ class PassportServiceImpleTest {
             passportData.setEmail(request.getEmail());
             passportData.setFirstName(request.getFirstName());
             passportData.setLastName(request.getLastName());
-            passportData.setAge(request.getAge());
+            passportData.setDob(request.getDob());
             passportData.setPhoneNumber(request.getPhoneNumber());
             MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
             request.setPassportDoc(imageFile);
-            String extractedText = "F27284823PankajSharma";
+            String extractedText = "F27284823PankajSharmaJaipurRajasthan23/12/2000";
             BufferedImage bufferedImage=null;
             when(passportDataRepository.save(any())).thenReturn(passportData);
             when(addressRepository.save(any())).thenReturn(address);
             Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
 
-            when(validationService.verifyValidation(request)).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.zipcodeValidation((any()))).thenReturn(true);
+            when(validationService.passportNumberValidation(any())).thenReturn(true);
+            when(validationService.addressValidation(any())).thenReturn(true);
 
 
 //		when(tesseract.doOCR((File) any())).thenReturn("MockOCRResult");
@@ -122,7 +132,8 @@ class PassportServiceImpleTest {
             request.setCity("jaipur");
             request.setState("rajasthan");
             request.setZipcode("302029");
-            request.setAge("25");
+            request.setDob(new java.sql.Date(2000,12,23));
+            request.setValidity(new Date(2033-12-12));
             request.setPassportNumber("L74568900");
             MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
             request.setPassportDoc(imageFile);
@@ -131,10 +142,15 @@ class PassportServiceImpleTest {
 //            when(passportDataRepository.save(any())).thenReturn(new PassportData());
 //            when(addressRepository.save(any())).thenReturn(new Address());
             Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
-            when(validationService.verifyValidation(request)).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.passportNumberValidation(any())).thenReturn(true);
+            when(validationService.zipcodeValidation((any()))).thenReturn(true);
+            when(validationService.addressValidation(any())).thenReturn(true);
             when(passportDataRepository.findByNo(anyString())).thenReturn(null);
             VerificationResponse response = passportService.registerPassport(request);
-            assertEquals("First Name Does Not Match", response.getMessage());
+            assertEquals("Verification Failed due to First Name Does Not Match", response.getMessage());
         }
         @Test
         public void testRegisterPassport_LastNameNotMatching() throws TesseractException, IOException, ValidationException {
@@ -149,7 +165,8 @@ class PassportServiceImpleTest {
             request.setCity("jaipur");
             request.setState("rajasthan");
             request.setZipcode("302029");
-            request.setAge("25");
+            request.setDob(new java.sql.Date(2000,12,23));
+            request.setValidity(new Date(2033-12-12));
             request.setPassportNumber("L74568900");
             MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
             request.setPassportDoc(imageFile);
@@ -158,11 +175,116 @@ class PassportServiceImpleTest {
 //            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
 //            Mockito.when(addressRepository.save(any())).thenReturn(new Address());
             Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
-            when(validationService.verifyValidation(request)).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.passportNumberValidation(any())).thenReturn(true);
+            when(validationService.zipcodeValidation((any()))).thenReturn(true);
+            when(validationService.addressValidation(any())).thenReturn(true);
             when(passportDataRepository.findByNo(anyString())).thenReturn(null);
             VerificationResponse response = passportService.registerPassport(request);
-            assertEquals("Last Name does not match", response.getMessage());
+            assertEquals("Verification Failed due to Last Name does not match", response.getMessage());
         }
+    @Test
+    public void testRegisterPassport_CityNotMatching() throws TesseractException, IOException, ValidationException {
+
+        PassportDataRequest request = new PassportDataRequest();
+        request.setFirstName("Rahul");
+        request.setLastName("Sharma");
+        request.setPhoneNumber("7890562300");
+        request.setEmail("pankaj@gmail.com");
+        request.setAddressLine1("dhsgd");
+        request.setAddressLine2("sdgsdhd");
+        request.setCity("alwar");
+        request.setState("rajasthan");
+        request.setZipcode("302029");
+        LocalDate dob=LocalDate.of(2000,12,23);
+        request.setDob(new java.sql.Date(2000,12,23));
+        request.setValidity(new Date(2033-12-12));
+        request.setPassportNumber("L74568900");
+        MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
+        request.setPassportDoc(imageFile);
+        String extractedText = "L74568900RahulSharmaJaipurRajasthan23/12/2000";
+        BufferedImage bufferedImage=null;
+//            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
+//            Mockito.when(addressRepository.save(any())).thenReturn(new Address());
+        Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
+        when(validationService.nameValidation(any())).thenReturn(true);
+        when(validationService.emailValidation(any())).thenReturn(true);
+        when(validationService.phoneNumberValidation(any())).thenReturn(true);
+        when(validationService.passportNumberValidation(any())).thenReturn(true);
+        when(validationService.zipcodeValidation((any()))).thenReturn(true);
+        when(validationService.addressValidation(any())).thenReturn(true);
+        when(passportDataRepository.findByNo(anyString())).thenReturn(null);
+        VerificationResponse response = passportService.registerPassport(request);
+        assertEquals("Verification Failed due to city does not match", response.getMessage());
+    }
+    @Test
+    public void testRegisterPassport_StateNotMatching() throws TesseractException, IOException, ValidationException {
+
+        PassportDataRequest request = new PassportDataRequest();
+        request.setFirstName("Rahul");
+        request.setLastName("Sharma");
+        request.setPhoneNumber("7890562300");
+        request.setEmail("pankaj@gmail.com");
+        request.setAddressLine1("dhsgd");
+        request.setAddressLine2("sdgsdhd");
+        request.setCity("jaipur");
+        request.setState("Delhi");
+        request.setZipcode("302029");
+        request.setDob(new java.sql.Date(2000,12,23));
+        request.setValidity(new Date(2033-12-12));
+        request.setPassportNumber("L74568900");
+        MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
+        request.setPassportDoc(imageFile);
+        String extractedText = "L74568900RahulSharmaJaipurRajasthan";
+        BufferedImage bufferedImage=null;
+//            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
+//            Mockito.when(addressRepository.save(any())).thenReturn(new Address());
+        Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
+        when(validationService.nameValidation(any())).thenReturn(true);
+        when(validationService.emailValidation(any())).thenReturn(true);
+        when(validationService.phoneNumberValidation(any())).thenReturn(true);
+        when(validationService.passportNumberValidation(any())).thenReturn(true);
+        when(validationService.zipcodeValidation((any()))).thenReturn(true);
+        when(validationService.addressValidation(any())).thenReturn(true);
+        when(passportDataRepository.findByNo(anyString())).thenReturn(null);
+        VerificationResponse response = passportService.registerPassport(request);
+        assertEquals("Verification failed due to state does not match", response.getMessage());
+    }
+    @Test
+    public void testRegisterPassport_DobNotMatching() throws TesseractException, IOException, ValidationException {
+
+        PassportDataRequest request = new PassportDataRequest();
+        request.setFirstName("Rahul");
+        request.setLastName("Sharma");
+        request.setPhoneNumber("7890562300");
+        request.setEmail("pankaj@gmail.com");
+        request.setAddressLine1("dhsgd");
+        request.setAddressLine2("sdgsdhd");
+        request.setCity("jaipur");
+        request.setState("rajasthan");
+        request.setZipcode("302029");
+        request.setDob(new java.sql.Date(2000,12,23));
+        request.setValidity(new Date(2033-12-12));
+        request.setPassportNumber("L74568900");
+        MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
+        request.setPassportDoc(imageFile);
+        String extractedText = "L74568900RahulSharmaJaipurRajasthan20/01/2002";
+        BufferedImage bufferedImage=null;
+//            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
+//            Mockito.when(addressRepository.save(any())).thenReturn(new Address());
+        Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
+        when(validationService.nameValidation(any())).thenReturn(true);
+        when(validationService.emailValidation(any())).thenReturn(true);
+        when(validationService.phoneNumberValidation(any())).thenReturn(true);
+        when(validationService.passportNumberValidation(any())).thenReturn(true);
+        when(validationService.zipcodeValidation((any()))).thenReturn(true);
+        when(validationService.addressValidation(any())).thenReturn(true);
+        when(passportDataRepository.findByNo(anyString())).thenReturn(null);
+        VerificationResponse response = passportService.registerPassport(request);
+        assertEquals("Verification failed due to DOB does not match", response.getMessage());
+    }
         @Test
         public void testRegisterPassport_PassportNumberNotMatching() throws TesseractException, IOException, ValidationException {
 
@@ -176,7 +298,8 @@ class PassportServiceImpleTest {
             request.setCity("jaipur");
             request.setState("rajasthan");
             request.setZipcode("302029");
-            request.setAge("25");
+            request.setDob(new java.sql.Date(2000,12,23));
+            request.setValidity(new Date(2033-12-12));
             request.setPassportNumber("L74568900");
             MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
             request.setPassportDoc(imageFile);
@@ -185,10 +308,46 @@ class PassportServiceImpleTest {
 //            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
 //            Mockito.when(addressRepository.save(any())).thenReturn(new Address());
             Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
-            when(validationService.verifyValidation(request)).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.passportNumberValidation(any())).thenReturn(true);
+            when(validationService.addressValidation(any())).thenReturn(true);
+            when(validationService.zipcodeValidation((any()))).thenReturn(true);
             when(passportDataRepository.findByNo(anyString())).thenReturn(null);
             VerificationResponse response = passportService.registerPassport(request);
-            assertEquals("Passport Number does not match", response.getMessage());
+            assertEquals("Verification Failed due to Passport Number does not match", response.getMessage());
+        }
+        @Test
+        public void testRegisterPassport_EmailRegistered() throws TesseractException,IOException,ValidationException{
+            PassportDataRequest request = new PassportDataRequest();
+            request.setFirstName("Pankaj");
+            request.setLastName("Sharma");
+            request.setPhoneNumber("7890562300");
+            request.setEmail("pankaj@gmail.com");
+            request.setAddressLine1("dhsgd");
+            request.setAddressLine2("sdgsdhd");
+            request.setCity("jaipur");
+            request.setState("rajasthan");
+            request.setZipcode("302029");
+            request.setDob(new java.sql.Date(2000,12,23));
+            request.setPassportNumber("F27284823");
+
+            MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
+            request.setPassportDoc(imageFile);
+            String extractedText = "F27284823PankajSharma";
+            BufferedImage bufferedImage=null;
+//            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
+            Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.passportNumberValidation(any())).thenReturn(true);
+            when(validationService.addressValidation(any())).thenReturn(true);
+            when(validationService.zipcodeValidation((any()))).thenReturn(true);
+            when(passportDataRepository.findByEmail(any())).thenReturn(new PassportData());
+            VerificationResponse response = passportService.registerPassport(request);
+            assertEquals("Registered Already", response.getMessage());
         }
         @Test
         public void testRegisterPassport_RegisteredAlready() throws TesseractException, IOException, ValidationException {
@@ -202,7 +361,7 @@ class PassportServiceImpleTest {
             request.setCity("jaipur");
             request.setState("rajasthan");
             request.setZipcode("302029");
-            request.setAge("25");
+            request.setDob(new java.sql.Date(2000,12,23));
             request.setPassportNumber("F27284823");
 
             MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
@@ -211,7 +370,12 @@ class PassportServiceImpleTest {
             BufferedImage bufferedImage=null;
 //            Mockito.when(passportDataRepository.save(any())).thenReturn(new PassportData());
             Mockito.when(tesseract.doOCR(bufferedImage)).thenReturn(extractedText);
-            when(validationService.verifyValidation(request)).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.passportNumberValidation(any())).thenReturn(true);
+            when(validationService.addressValidation(any())).thenReturn(true);
+            when(validationService.zipcodeValidation((any()))).thenReturn(true);
             when(passportDataRepository.findByNo(any())).thenReturn(new PassportData());
             VerificationResponse response = passportService.registerPassport(request);
             assertEquals("Registered Already", response.getMessage());
@@ -229,7 +393,7 @@ class PassportServiceImpleTest {
             request.setCity("jaipur");
             request.setState("rajasthan");
             request.setZipcode("302029");
-            request.setAge("25");
+            request.setDob(new java.sql.Date(2000,12,23));
             request.setPassportNumber("F27284823");
             InputStream inputStream = mock(InputStream.class);
             MockMultipartFile mockMultipartFile = new MockMultipartFile("passportDoc", "filename.txt", "text/plain", inputStream);
@@ -249,15 +413,17 @@ class PassportServiceImpleTest {
             passportData.setPassportNumber("H3828392");
             passportData.setAddress(address);
             passportData.setPhoneNumber("2832982323");
-            passportData.setAge("34");
+            passportData.setDob(new java.sql.Date(2000,12,23));
+            passportData.setValidity(new Date(2033-01-01));
             passportData.setId(passportData.getId());
             passportData.getPassportNumber();
-            passportData.getAge();
+            passportData.getDob();
             passportData.getFirstName();
             passportData.getLastName();
             passportData.getAddress();
             passportData.getPhoneNumber();
             passportData.getEmail();
+            passportData.getValidity();
             address.getCity();
             address.getState();
             address.getAddressLine1();
@@ -268,9 +434,14 @@ class PassportServiceImpleTest {
 
             VerificationResponse verificationResponse=new VerificationResponse();
             verificationResponse.setMessage(null);
-            VerificationResponse verificationResponse1=new VerificationResponse(null);
+            VerificationResponse verificationResponse1=new VerificationResponse(null,false);
 
-            when(validationService.verifyValidation(request)).thenReturn(false);
+            when(validationService.nameValidation(any())).thenReturn(false);
+            when(validationService.emailValidation(any())).thenReturn(false);
+            when(validationService.phoneNumberValidation(any())).thenReturn(false);
+            when(validationService.passportNumberValidation(any())).thenReturn(false);
+            when(validationService.addressValidation(any())).thenReturn(false);
+            when(validationService.zipcodeValidation(any())).thenReturn(false);
             verify(tesseract, never()).doOCR((File) any());
             verify(passportDataRepository, never()).findByNo(anyString());
 
@@ -295,10 +466,10 @@ class PassportServiceImpleTest {
             when(passportDataRepository.findByEmail(email)).thenReturn(expectedPassportData);
 
 
-            PassportData result = passportService.getPassport(getRequest);
+            PassportResponse result = passportService.getPassport(getRequest);
 
 
-            assertEquals(expectedPassportData, result);
+            assertEquals(expectedPassportData, result.getPassportData());
             verify(passportDataRepository, times(1)).findByEmail(email);
         }
 
@@ -355,13 +526,18 @@ class PassportServiceImpleTest {
         request.setCity("jaipur");
         request.setState("rajasthan");
         request.setZipcode("302029");
-        request.setAge("25");
+        request.setDob(new java.sql.Date(2000,12,23));
         request.setPassportNumber("L74568900");
         MockMultipartFile imageFile = new MockMultipartFile("aadhaarImageFile", "aadhaar4.jpg", MediaType.IMAGE_JPEG_VALUE, "image data".getBytes());
         request.setPassportDoc(imageFile);
         String extractedText = "F27284823RahulSharma";
         BufferedImage bufferedImage=null;
-        when(validationService.verifyValidation(request)).thenReturn(true);
+        when(validationService.nameValidation(any())).thenReturn(true);
+        when(validationService.emailValidation(any())).thenReturn(true);
+        when(validationService.phoneNumberValidation(any())).thenReturn(true);
+        when(validationService.passportNumberValidation(any())).thenReturn(true);
+        when(validationService.zipcodeValidation((any()))).thenReturn(true);
+        when(validationService.addressValidation(any())).thenReturn(true);
         when(passportDataRepository.findByNo(any())).thenReturn(null);
         when(tesseract.doOCR(bufferedImage)).thenThrow(new TesseractException("Test TesseractException"));
 

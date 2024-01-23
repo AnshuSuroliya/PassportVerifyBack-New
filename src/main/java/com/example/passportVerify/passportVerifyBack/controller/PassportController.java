@@ -4,6 +4,7 @@ import com.example.passportVerify.passportVerifyBack.exception.PassportException
 import com.example.passportVerify.passportVerifyBack.exception.ValidationException;
 import com.example.passportVerify.passportVerifyBack.request.GetRequest;
 import com.example.passportVerify.passportVerifyBack.request.PassportDataRequest;
+import com.example.passportVerify.passportVerifyBack.response.PassportResponse;
 import com.example.passportVerify.passportVerifyBack.response.VerificationResponse;
 import com.example.passportVerify.passportVerifyBack.service.PassportServiceImple;
 import net.sourceforge.tess4j.TesseractException;
@@ -30,7 +31,7 @@ public class PassportController {
 				HttpStatus.ACCEPTED);
 	}
 	@PostMapping("/profile")
-	public ResponseEntity<?> fetchData(@RequestBody GetRequest getRequest)throws PassportException {
+	public ResponseEntity<PassportResponse> fetchData(@RequestBody GetRequest getRequest)throws PassportException {
 		return new ResponseEntity<>(passportServiceImple.getPassport(getRequest),HttpStatus.OK);
 	}
 }

@@ -55,7 +55,9 @@ class UserRegisterServiceImpleTest {
             user.setEmail("pankaj@gmail.com");
             BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
             user.setPassword(bCryptPasswordEncoder.encode("pankaj@123"));
-            when(validationService.sigupValidation(any(User.class))).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
             when(userRepository.findByEmail(any())).thenReturn(null);
             when(userRepository.save(any())).thenReturn(user);
 
@@ -74,7 +76,10 @@ class UserRegisterServiceImpleTest {
             user.setEmail("pankaj@gmail.com");
             BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
             user.setPassword(bCryptPasswordEncoder.encode("pankaj@123)"));
-            when(validationService.sigupValidation(any(User.class))).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
+
             when(userRepository.findByEmail(any())).thenReturn(user);
 
             SignupResponse response = userRegisterServiceImple.signUp(user);
@@ -89,7 +94,9 @@ class UserRegisterServiceImpleTest {
             user.setLastName("Sharma");
             user.setPhoneNumber("9876578900");
             user.setEmail("pankaj@gmail.com");
-            when(validationService.sigupValidation(any())).thenReturn(true);
+            when(validationService.nameValidation(any())).thenReturn(true);
+            when(validationService.phoneNumberValidation(any())).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
             when(userRepository.findByEmail("nonexistent@example.com")).thenReturn(null);
 
             // Set the userRepository in your service using reflection or constructor injection
@@ -112,10 +119,12 @@ class UserRegisterServiceImpleTest {
             user.setEmail("pankaj@gmail.com");
             SignupResponse signupResponse=new SignupResponse();
             signupResponse.setMessage(null);
-            SignupResponse signupResponse1=new SignupResponse(null);
+            SignupResponse signupResponse1=new SignupResponse(null,false);
             BCryptPasswordEncoder bCryptPasswordEncoder=new BCryptPasswordEncoder();
             user.setPassword(bCryptPasswordEncoder.encode("pankaj@123"));
-            when(validationService.sigupValidation(any(User.class))).thenReturn(false);
+            when(validationService.nameValidation(any())).thenReturn(false);
+            when(validationService.phoneNumberValidation(any())).thenReturn(false);
+            when(validationService.emailValidation(any())).thenReturn(false);
 
             assertThrows(ValidationException.class, () -> userRegisterServiceImple.signUp(user));
 
@@ -128,7 +137,7 @@ class UserRegisterServiceImpleTest {
             user.setEmail("test@example.com");
             user.setPassword(new BCryptPasswordEncoder().encode("password"));
 
-            when(validationService.signinValidation(login)).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
             when(userRepository.findByEmail(login.getEmail())).thenReturn(user);
 
             Authentication authentication = mock(Authentication.class);
@@ -146,7 +155,7 @@ class UserRegisterServiceImpleTest {
             assertEquals("fakeToken", loginResponse.getJwt());
             assertEquals("Login Successfull!", loginResponse.getMessage());
             assertEquals("test@example.com", loginResponse.getEmail());
-            verify(validationService, times(1)).signinValidation(login);
+            verify(validationService, times(1)).emailValidation(login.getEmail());
             verify(userRepository, times(1)).findByEmail(login.getEmail());
             verify(authenticationManager, times(1)).authenticate(any());
             verify(jwtService, times(1)).generateToken(login.getEmail());
@@ -176,7 +185,7 @@ class UserRegisterServiceImpleTest {
             Login login = new Login();
             login.setEmail("pan@gmail.com");
             login.setPassword("pankaj@123");// create a login object with necessary data
-            when(validationService.signinValidation(any(Login.class))).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
             when(userRepository.findByEmail(any())).thenReturn(null);
 
             LoginResponse response = userRegisterServiceImple.signIn(login);
@@ -191,7 +200,7 @@ class UserRegisterServiceImpleTest {
             Login login = new Login();
             login.setEmail("pankaj@gmail.com");
             login.setPassword("pan23");// create a login object with necessary data
-            when(validationService.signinValidation(any(Login.class))).thenReturn(true);
+            when(validationService.emailValidation(any())).thenReturn(true);
             when(userRepository.findByEmail(any())).thenReturn(new User());
             when(authenticationManager.authenticate(any())).thenReturn(mock(Authentication.class));
 
@@ -214,7 +223,7 @@ class UserRegisterServiceImpleTest {
             loginResponse.setEmail(null);
             loginResponse.getEmail();
             LoginResponse loginResponse1=new LoginResponse(false,null,null,null);
-            when(validationService.signinValidation(any(Login.class))).thenReturn(false);
+            when(validationService.emailValidation(any())).thenReturn(false);
 
             assertThrows(ValidationException.class, () -> userRegisterServiceImple.signIn(login));
 
@@ -249,7 +258,7 @@ class UserRegisterServiceImpleTest {
 
         AuthenticationManager authenticationManager = mock(AuthenticationManager.class);
         when(userRepository.findByEmail(any())).thenReturn(new User());
-        when(validationService.signinValidation(any())).thenReturn(true);
+        when(validationService.emailValidation(any())).thenReturn(true);
         when(authenticationManager.authenticate(any())).thenReturn(mock(org.springframework.security.core.Authentication.class));
 
         // Set the authenticationManager in your service using reflection or constructor injection

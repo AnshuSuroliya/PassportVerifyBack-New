@@ -99,6 +99,29 @@
 	<build>
 		<plugins>
 			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-pmd-plugin</artifactId>
+				<version>3.15.0</version>
+				<configuration>
+					<linkXRef>false</linkXRef>
+					<sourceEncoding>UTF-8</sourceEncoding>
+					<minimumTokens>100</minimumTokens>
+					<failOnViolation>false</failOnViolation>
+					<rulesets>
+						<ruleset>rulesets/java/braces.xml</ruleset>
+						<ruleset>rulesets/java/naming.xml</ruleset>
+					</rulesets>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>verify</phase>
+						<goals>
+							<goal>pmd</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
 				<groupId>org.jacoco</groupId>
 				<artifactId>jacoco-maven-plugin</artifactId>
 				<version>0.8.7</version> <!-- Use the latest version -->

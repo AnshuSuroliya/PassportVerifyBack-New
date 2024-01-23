@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.sql.Date;
+
 
 @Getter
 @Setter
@@ -20,9 +22,10 @@ public class PassportDataRequest {
     private String state;
     private String city;
     private String zipcode;
-    private String age;
+    private Date dob;
     private String phoneNumber;
     private String email;
     private String passportNumber;
+    private Date validity;
     private MultipartFile passportDoc;
 }

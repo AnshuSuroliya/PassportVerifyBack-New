@@ -11,4 +11,5 @@ import lombok.Setter;
 @AllArgsConstructor
 public class SignupResponse {
     private String message;
+    private Boolean success;
 }

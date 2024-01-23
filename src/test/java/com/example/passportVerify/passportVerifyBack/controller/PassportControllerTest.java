@@ -5,6 +5,7 @@ import com.example.passportVerify.passportVerifyBack.exception.PassportException
 import com.example.passportVerify.passportVerifyBack.exception.ValidationException;
 import com.example.passportVerify.passportVerifyBack.request.GetRequest;
 import com.example.passportVerify.passportVerifyBack.request.PassportDataRequest;
+import com.example.passportVerify.passportVerifyBack.response.PassportResponse;
 import com.example.passportVerify.passportVerifyBack.response.VerificationResponse;
 import com.example.passportVerify.passportVerifyBack.service.PassportServiceImple;
 import net.sourceforge.tess4j.TesseractException;
@@ -40,7 +41,7 @@ class PassportControllerTest {
     void testVerify_Success() throws TesseractException, IOException, ValidationException {
 
         PassportDataRequest passportDataRequest = new PassportDataRequest();
-        when(passportServiceImple.registerPassport(passportDataRequest)).thenReturn(new VerificationResponse("Verified and Registered Successfully"));
+        when(passportServiceImple.registerPassport(passportDataRequest)).thenReturn(new VerificationResponse("Verified and Registered Successfully",true));
 
 
         ResponseEntity<VerificationResponse> responseEntity = passportController.verify(passportDataRequest);
@@ -56,7 +57,8 @@ class PassportControllerTest {
 
         GetRequest getRequest = new GetRequest();
         PassportData passportData=new PassportData();
-        when(passportServiceImple.getPassport(getRequest)).thenReturn(passportData);
+        PassportResponse passportResponse=new PassportResponse();
+        when(passportServiceImple.getPassport(getRequest)).thenReturn(passportResponse);
 
 
         ResponseEntity<?> responseEntity = passportController.fetchData(getRequest);

@@ -42,7 +42,7 @@ class UserControllerTest {
     void testRegister_Success() throws UserException, ValidationException {
 
         User user = new User();
-        SignupResponse signupResponse=new SignupResponse("User Registered Successfully");
+        SignupResponse signupResponse=new SignupResponse("User Registered Successfully",true);
         when(userRegisterService.signUp(any(User.class))).thenReturn(new ResponseEntity<>(signupResponse, HttpStatus.CREATED).getBody());
         //Mockito.when(userRepository.findByEmail(any())).thenReturn(null);
 
